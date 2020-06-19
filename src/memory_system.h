@@ -30,8 +30,6 @@ class MemorySystem {
     bool WillAcceptTransaction(uint64_t hex_addr, bool is_write) const;
     bool AddTransaction(uint64_t hex_addr, bool is_write);
 
-    const Config * GetConfig() const { return config_; }
-    
    private:
     // These have to be pointers because Gem5 will try to push this object
     // into container which will invoke a copy constructor, using pointers
