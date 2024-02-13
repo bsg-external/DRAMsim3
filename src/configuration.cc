@@ -143,10 +143,8 @@ void Config::InitDRAMParams() {
     // page size, and address mapping...
     // To make life easier, we regulate the use of the term "column"
     // to only represent physical column (device width)
-    if (IsGDDR()) {
+    if (IsGDDR() || IsHBM()) {
         columns *= BL;
-    } else if (IsHBM()) {
-        columns *= 2;
     }
     return;
 }
@@ -176,7 +174,8 @@ void Config::InitOtherParams() {
         output_dir + reader.Get("other", "output_prefix", "dramsim3");
     json_stats_name = output_prefix + ".json";
     json_epoch_name = output_prefix + "epoch.json";
-    txt_stats_name = output_prefix + ".txt";
+    json_tag_name   = output_prefix + ".tag.json";
+    txt_stats_name  = output_prefix + ".txt";
     return;
 }
 

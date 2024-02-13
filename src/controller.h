@@ -15,6 +15,10 @@
 #include "thermal.h"
 #endif  // THERMAL
 
+#ifdef BLOOD_GRAPH
+#include "blood_graph.h"
+#endif
+
 namespace dramsim3 {
 
 enum class RowBufPolicy { OPEN_PAGE, CLOSE_PAGE, SIZE };
@@ -33,6 +37,7 @@ class Controller {
     int QueueUsage() const;
     // Stats output
     void PrintEpochStats();
+    void PrintTagStats(uint32_t tag);
     void PrintFinalStats();
     void ResetStats() { simple_stats_.Reset(); }
     std::pair<uint64_t, int> ReturnDoneTrans(uint64_t clock);
@@ -71,11 +76,15 @@ class Controller {
     std::ofstream cmd_trace_;
 #endif  // CMD_TRACE
 
+#ifdef BLOOD_GRAPH
+    BloodGraph blood_graph_;
+#endif
     // used to calculate inter-arrival latency
     uint64_t last_trans_clk_;
 
     // transaction queueing
     int write_draining_;
+    bool force_reads_;
     void ScheduleTransaction();
     void IssueCommand(const Command &tmp_cmd);
     Command TransToCommand(const Transaction &trans);

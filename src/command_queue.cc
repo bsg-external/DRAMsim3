@@ -124,6 +124,10 @@ bool CommandQueue::QueueEmpty() const {
 }
 
 
+bool CommandQueue::QueueEmpty(int q_idx) const {
+    return queues_[q_idx].empty();
+}
+
 bool CommandQueue::AddCommand(Command cmd) {
     auto& queue = GetQueue(cmd.Rank(), cmd.Bankgroup(), cmd.Bank());
     if (queue.size() < queue_size_) {
@@ -141,6 +145,14 @@ CMDQueue& CommandQueue::GetNextQueue() {
         queue_idx_ = 0;
     }
     return queues_[queue_idx_];
+}
+
+std::tuple<int, int, int> CommandQueue::GetBankBankgroupRankFromQueueIndex(int queue_index) const {
+    int rank = queue_index % config_.ranks;
+    int bgba = queue_index / config_.ranks;
+    int bankgroup = bgba % config_.bankgroups;
+    int bank = bgba / config_.bankgroups;
+    return std::make_tuple(bank, bankgroup, rank);
 }
 
 void CommandQueue::GetRefQIndices(const Command& ref) {
@@ -165,8 +177,10 @@ int CommandQueue::GetQueueIndex(int rank, int bankgroup, int bank) const {
     if (queue_structure_ == QueueStructure::PER_RANK) {
         return rank;
     } else {
-        return rank * config_.banks + bankgroup * config_.banks_per_group +
-               bank;
+        // alternates ranks, then bank groups, then banks
+        return bank * config_.bankgroups * config_.ranks
+            +  bankgroup * config_.ranks
+            +  rank;
     }
 }
 

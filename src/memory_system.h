@@ -24,12 +24,18 @@ class MemorySystem {
     int GetBusBits() const;
     int GetBurstLength() const;
     int GetQueueSize() const;
+    //This is called in ClockTick
+    void PrintEpochStats() const;
+    //This gets called from the manycore
+    void PrintTagStats(uint32_t tag) const;
     void PrintStats() const;
     void ResetStats();
 
     bool WillAcceptTransaction(uint64_t hex_addr, bool is_write) const;
     bool AddTransaction(uint64_t hex_addr, bool is_write);
 
+    const Config * GetConfig() const { return config_; }
+    
    private:
     // These have to be pointers because Gem5 will try to push this object
     // into container which will invoke a copy constructor, using pointers
