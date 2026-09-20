@@ -3,6 +3,7 @@
 #include "fmt/format.h"
 #include "simple_stats.h"
 
+#ifndef DRAMSIM3_NO_STATISTICS
 namespace dramsim3 {
 
 template <class T>
@@ -599,3 +600,4 @@ void SimpleStats::UpdateFinalStats() {
 }
 
 }  // namespace dramsim3
+#endif  // DRAMSIM3_NO_STATISTICS
