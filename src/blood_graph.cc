@@ -30,10 +30,11 @@ BloodGraph::BloodGraph(int channel_id, const Config &config)
   ref_count_ = 0;
 
   bank_count_ = config_.ranks * config_.banks;
-  read_issued_.reserve(bank_count_);
-  write_issued_.reserve(bank_count_);
-  pre_count_.reserve(bank_count_);
-  act_count_.reserve(bank_count_);
+  // Indexed accesses below require live elements, not only allocated capacity.
+  read_issued_.resize(bank_count_);
+  write_issued_.resize(bank_count_);
+  pre_count_.resize(bank_count_);
+  act_count_.resize(bank_count_);
   for (int i = 0; i < bank_count_; i++) {
     read_issued_[i] = false;
     write_issued_[i] = false;
