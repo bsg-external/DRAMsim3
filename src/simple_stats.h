@@ -1,6 +1,13 @@
 #ifndef __SIMPLE_STATS_
 #define __SIMPLE_STATS_
 
+// Compile every DRAMSim3 translation unit with the same statistics policy.
+// The simulator build uses this version to reject older, unaware sources.
+#define DRAMSIM3_STATISTICS_CONTROL 1
+#if defined(DRAMSIM3_NO_STATISTICS) && (defined(BLOOD_GRAPH) || defined(THERMAL))
+#error "DRAMSIM3_NO_STATISTICS is incompatible with BLOOD_GRAPH or THERMAL"
+#endif
+
 #include <fstream>
 #include <string>
 #include <unordered_map>
@@ -11,6 +18,23 @@
 
 namespace dramsim3 {
 
+#ifdef DRAMSIM3_NO_STATISTICS
+// Keep the observer interface available to the timing model. Accept string
+// literals directly so disabled counters do not construct temporary strings.
+class SimpleStats {
+   public:
+    SimpleStats(const Config&, int) {}
+    template <class Name> void Increment(const Name&) {}
+    void SetTag(uint64_t) {}
+    template <class Name> void IncrementVec(const Name&, int) {}
+    template <class Name> void IncrementVecBy(const Name&, int, int) {}
+    template <class Name> void AddValue(const Name&, int) {}
+    void PrintEpochStats() {}
+    void PrintTagStats() {}
+    void PrintFinalStats() {}
+    void Reset() {}
+};
+#else
 class SimpleStats {
    public:
     SimpleStats(const Config& config, int channel_id);
@@ -136,6 +160,7 @@ class SimpleStats {
     Json j_data_;
     std::vector<std::pair<std::string, std::string> > print_pairs_;
 };
+#endif  // DRAMSIM3_NO_STATISTICS
 
 }  // namespace dramsim3
 #endif

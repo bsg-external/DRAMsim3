@@ -346,6 +346,7 @@ void Controller::PrintFinalStats() {
 }
 
 void Controller::UpdateCommandStats(const Command &cmd) {
+#ifndef DRAMSIM3_NO_STATISTICS
     switch (cmd.cmd_type) {
         case CommandType::READ:
         case CommandType::READ_PRECHARGE:
@@ -384,6 +385,7 @@ void Controller::UpdateCommandStats(const Command &cmd) {
         default:
             AbruptExit(__FILE__, __LINE__);
     }
+#endif
 }
 
 }  // namespace dramsim3

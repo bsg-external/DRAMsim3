@@ -34,6 +34,7 @@ int BaseDRAMSystem::GetChannel(uint64_t hex_addr) const {
 }
 
 void BaseDRAMSystem::PrintEpochStats() {
+#ifndef DRAMSIM3_NO_STATISTICS
     // first epoch, print bracket
     if (clk_ - config_.epoch_period == 0) {
         std::ofstream epoch_out(config_.json_epoch_name, std::ofstream::out);
@@ -48,9 +49,11 @@ void BaseDRAMSystem::PrintEpochStats() {
     thermal_calc_.PrintTransPT(clk_);
 #endif  // THERMAL
     return;
+#endif
 }
 
 void BaseDRAMSystem::PrintTagStats(uint32_t tag) {
+#ifndef DRAMSIM3_NO_STATISTICS
     static bool init = true;
     // first epoch, print bracket
     if (init) {
@@ -67,9 +70,11 @@ void BaseDRAMSystem::PrintTagStats(uint32_t tag) {
     thermal_calc_.PrintTransPT(clk_);
 #endif  // THERMAL
     return;
+#endif
 }
 
 void BaseDRAMSystem::PrintStats() {
+#ifndef DRAMSIM3_NO_STATISTICS
     // Finish epoch output, remove last comma and append ]
     std::ofstream epoch_out(config_.json_epoch_name, std::ios_base::in |
                                                          std::ios_base::out |
@@ -104,6 +109,7 @@ void BaseDRAMSystem::PrintStats() {
 #ifdef THERMAL
     thermal_calc_.PrintFinalPT(clk_);
 #endif  // THERMAL
+#endif  // DRAMSIM3_NO_STATISTICS
 }
 
 void BaseDRAMSystem::ResetStats() {
@@ -190,9 +196,11 @@ void JedecDRAMSystem::ClockTick() {
     }
     clk_++;
 
+#ifndef DRAMSIM3_NO_STATISTICS
     if (clk_ % config_.epoch_period == 0) {
         PrintEpochStats();
     }
+#endif
     return;
 }
 
